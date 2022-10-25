@@ -1,8 +1,6 @@
 package main
 
-import (
-	"logger/logger"
-)
+import "github.com/yuanbaopig/mylogger/logger"
 
 func main() {
 
