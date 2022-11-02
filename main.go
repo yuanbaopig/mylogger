@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/yuanbaopig/mylogger/logger"
+	"os"
 )
 
 func main() {
@@ -22,6 +23,7 @@ func main() {
 	//if err != nil {
 	//	panic(err)
 	//}
+
 	test()
 
 }
@@ -39,5 +41,10 @@ func test() {
 		logger.Warning("this is warning log")
 		info = "fatal"
 		logger.Fatal("this is fatal log")
+
+		a, _ := logger.New("debug", os.Stderr)
+		a.Debug("debug")
+		a.Info("info")
 	}
+
 }

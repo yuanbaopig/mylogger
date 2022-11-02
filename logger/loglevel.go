@@ -40,7 +40,7 @@ func (m *MyLog) Output(format interface{}, fileObject *os.File) {
 
 func (m *MyLog) output(level string, format string, a ...interface{}) {
 	// 检查日志是否需要切割
-	if std.Cut == true {
+	if m.Cut == true {
 
 		// 检查日志文件大小
 		if m.checkFileSize() == true {
@@ -60,13 +60,10 @@ func (m *MyLog) output(level string, format string, a ...interface{}) {
 	// 日志信息
 	msg := fmt.Sprintf(format, a...)
 
-	// 检查日志级别，如果是日志级别小于Info级别，则在标准输出
-	if m.Loglevel < InfoLevel {
-		fmt.Printf("%s,%s,%d,%s,%s,%d,%s\n", time.Now().Format("2006-01-02 15:04:05"), level, m.Pid, file, funcName, line, msg)
-	}
+	fmt.Printf("%s,%s,%d,%s,%s,%d,%s\n", time.Now().Format("2006-01-02 15:04:05"), level, m.Pid, file, funcName, line, msg)
 
 	// 写入日志文件
-	if std.fileObject != nil {
+	if m.fileObject != nil {
 		rwMutex.Lock()
 		_, err := fmt.Fprintf(m.fileObject, "%s,%s,%d,%s,%s,%d,%s\n", time.Now().Format("2006-01-02 15:04:05"), level, m.Pid, file, funcName, line, msg)
 		if err != nil {
@@ -96,32 +93,33 @@ func (m *MyLog) getInfo(n int) (funcName, fileName string, line int, ok bool) {
 }
 
 func (m *MyLog) Error(format string, a ...interface{}) {
-	if std.Loglevel <= ErrorLevel {
-		std.output("ERROR", format, a...)
+	if m.Loglevel <= ErrorLevel {
+		m.output("ERROR", format, a...)
 	}
 }
 
 func (m *MyLog) Warning(format string, a ...interface{}) {
-	if std.Loglevel <= WarningLevel {
-		std.output("WARNING", format, a...)
+	if m.Loglevel <= WarningLevel {
+		m.output("WARNING", format, a...)
 	}
 }
 
 func (m *MyLog) Info(format string, a ...interface{}) {
-	if std.Loglevel <= InfoLevel {
-		std.output("INFO", format, a...)
+
+	if m.Loglevel <= InfoLevel {
+		m.output("INFO", format, a...)
 	}
 }
 
 func (m *MyLog) Debug(format string, a ...interface{}) {
-	if std.Loglevel <= DebugLevel {
-		std.output("DEBUG", format, a...)
+	if m.Loglevel <= DebugLevel {
+		m.output("DEBUG", format, a...)
 	}
 }
 
 func (m *MyLog) Fatal(format string, a ...interface{}) {
-	if std.Loglevel <= FatalLevel {
-		std.output("FATAL", format, a...)
+	if m.Loglevel <= FatalLevel {
+		m.output("FATAL", format, a...)
 	}
 	os.Exit(1)
 }

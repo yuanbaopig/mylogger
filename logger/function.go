@@ -2,9 +2,7 @@ package logger
 
 import (
 	"errors"
-	"fmt"
 	"os"
-	"path"
 	"strings"
 )
 
@@ -26,31 +24,6 @@ func parseLoglevel(ls string) (level, error) {
 		err := errors.New("unknown log level")
 		return Unknown, err
 	}
-}
-
-func SetLogFile(LogPath, LogName string) error {
-	std.LogPath = LogPath
-	std.LogName = LogName
-
-	logFile := path.Join(LogPath, LogName)
-	logfile, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Printf("open file faild, error info %s", err)
-		return err
-	}
-	std.fileObject = logfile
-	return nil
-}
-
-func SetLevel(strLevel string) error {
-	level, err := parseLoglevel(strLevel)
-	if err != nil {
-		return fmt.Errorf("failed set level,error: %s", err)
-	}
-
-	std.Loglevel = level
-	return err
-
 }
 
 func Error(format string, a ...interface{}) {

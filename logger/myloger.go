@@ -56,7 +56,7 @@ func (m *MyLog) checkFileSize() (cut bool) {
 	if err != nil {
 		fmt.Println("get log file info failed, error:", err)
 	}
-	if logFileInfo.Size() > std.CutSize {
+	if logFileInfo.Size() > m.CutSize {
 		return true
 	} else {
 		return false
@@ -81,7 +81,7 @@ func (m *MyLog) fileCut() {
 		return
 	}
 	// 重新打开一个日志文件
-	err = SetLogFile(m.LogPath, m.LogName)
+	err = m.SetLogFile()
 	if err != nil {
 		fmt.Println("open new log file failed, error:", err)
 	}
@@ -91,7 +91,18 @@ func (m *MyLog) SetCut(cutSize int) error {
 	if cutSize > 1024 {
 		return errors.New("cut size is too big, value should less than 1024")
 	}
-	std.Cut = true
-	std.CutSize = int64(cutSize * cutFileSize)
+	m.Cut = true
+	m.CutSize = int64(cutSize * cutFileSize)
+	return nil
+}
+
+func (m *MyLog) SetLogFile() error {
+	logFile := path.Join(m.LogPath, m.LogName)
+	logfile, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Printf("open file faild, error info %s", err)
+		return err
+	}
+	m.fileObject = logfile
 	return nil
 }
