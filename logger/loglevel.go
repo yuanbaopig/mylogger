@@ -5,7 +5,6 @@ import (
 	"os"
 	"path"
 	"runtime"
-	"strings"
 	"sync"
 	"time"
 )
@@ -89,9 +88,9 @@ func (m *MyLog) getInfo(n int) (funcName, fileName string, line int, ok bool) {
 	*/
 	pc, file, line, ok := runtime.Caller(n)
 	fileName = path.Base(file)
-	bagFuncName := runtime.FuncForPC(pc).Name()
-	s := strings.Split(bagFuncName, ".")
-	funcName = s[1]
+	funcName = runtime.FuncForPC(pc).Name()
+	//s := strings.Split(bagFuncName, ".")
+	//funcName = s[1]
 	return
 
 }
