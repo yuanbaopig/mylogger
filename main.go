@@ -1,12 +1,14 @@
 package main
 
-import "github.com/yuanbaopig/mylogger/logger"
+import (
+	"github.com/yuanbaopig/mylogger/logger"
+)
 
 func main() {
-
+	// 自定义logger对象
 	//logger, err := logger.New("DEBUG", "./", "proc.log", false)
 	//if err != nil {
-	//	fmt.Printf("loger initialization failed")
+	//	fmt.Printf("logger initialization failed")
 	//}
 
 	// 指定日志文件输出
@@ -14,11 +16,17 @@ func main() {
 	//if err != nil {
 	//	panic(err)
 	//}
+
 	// 开启日志切割
 	//err = logger.SetCut(1)
 	//if err != nil {
 	//	panic(err)
 	//}
+	test()
+
+}
+
+func test() {
 	var info string
 	for {
 		info = "error"
@@ -32,5 +40,4 @@ func main() {
 		info = "fatal"
 		logger.Fatal("this is fatal log")
 	}
-
 }

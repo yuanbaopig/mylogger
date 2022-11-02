@@ -37,7 +37,6 @@ func (m *MyLog) Output(format interface{}, fileObject *os.File) {
 		fmt.Println("write log failed, error:", err)
 	}
 	rwMutex.Unlock()
-
 }
 
 func (m *MyLog) output(level string, format string, a ...interface{}) {
@@ -92,48 +91,15 @@ func (m *MyLog) getInfo(n int) (funcName, fileName string, line int, ok bool) {
 	fileName = path.Base(file)
 	bagFuncName := runtime.FuncForPC(pc).Name()
 	s := strings.Split(bagFuncName, ".")
-	funcName = s[0]
+	funcName = s[1]
 	return
 
-}
-
-func Error(format string, a ...interface{}) {
-	if std.Loglevel <= ErrorLevel {
-		std.output("ERROR", format, a...)
-	}
-
-}
-
-func Warning(format string, a ...interface{}) {
-	if std.Loglevel <= WarningLevel {
-		std.output("WARNING", format, a...)
-	}
-}
-
-func Info(format string, a ...interface{}) {
-	if std.Loglevel <= InfoLevel {
-		std.output("INFO", format, a...)
-	}
-}
-
-func Debug(format string, a ...interface{}) {
-	if std.Loglevel <= DebugLevel {
-		std.output("DEBUG", format, a...)
-	}
-}
-
-func Fatal(format string, a ...interface{}) {
-	if std.Loglevel <= FatalLevel {
-		std.output("FATAL", format, a...)
-	}
-	os.Exit(1)
 }
 
 func (m *MyLog) Error(format string, a ...interface{}) {
 	if std.Loglevel <= ErrorLevel {
 		std.output("ERROR", format, a...)
 	}
-
 }
 
 func (m *MyLog) Warning(format string, a ...interface{}) {

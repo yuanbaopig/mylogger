@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+var std, _ = New("debug", os.Stderr)
+
 type MyLog struct {
 	Loglevel   level
 	out        io.Writer
@@ -32,51 +34,6 @@ func New(strLevel string, w io.Writer) (m *MyLog, err error) {
 	log := &MyLog{Loglevel: logLevel, out: w, Pid: pid}
 
 	return log, err
-}
-
-var std, _ = New("debug", os.Stderr)
-
-// parseLoglevel 解析日志级别
-func parseLoglevel(ls string) (level, error) {
-	s := strings.ToUpper(ls)
-	switch s {
-	case "DEBUG":
-		return DebugLevel, nil
-	case "INFO":
-		return InfoLevel, nil
-	case "ERROR":
-		return ErrorLevel, nil
-	case "WARNING":
-		return WarningLevel, nil
-	case "FATAL":
-		return FatalLevel, nil
-	default:
-		err := errors.New("unknown log level")
-		return Unknown, err
-	}
-}
-
-func SetLogFile(LogPath, LogName string) error {
-	std.LogPath = LogPath
-	std.LogName = LogName
-
-	logFile := path.Join(LogPath, LogName)
-	logfile, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Printf("open file faild, error info %s", err)
-		return err
-	}
-	std.fileObject = logfile
-	return nil
-}
-
-func SetCut(cutSize int) error {
-	if cutSize > 1024 {
-		return errors.New("cut size is big, value should less than 1024")
-	}
-	std.Cut = true
-	std.CutSize = int64(cutSize * cutFileSize)
-	return nil
 }
 
 /*
@@ -128,4 +85,13 @@ func (m *MyLog) fileCut() {
 	if err != nil {
 		fmt.Println("open new log file failed, error:", err)
 	}
+}
+
+func (m *MyLog) SetCut(cutSize int) error {
+	if cutSize > 1024 {
+		return errors.New("cut size is too big, value should less than 1024")
+	}
+	std.Cut = true
+	std.CutSize = int64(cutSize * cutFileSize)
+	return nil
 }
