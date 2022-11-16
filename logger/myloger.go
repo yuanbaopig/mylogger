@@ -48,6 +48,7 @@ func New(strLevel string, w io.Writer) (m *MyLog, err error) {
 	4-4、重新打开一个新文件
 */
 
+// checkFileSize 检查日志文件大小
 func (m *MyLog) checkFileSize() (cut bool) {
 	// 获取日志文件
 	logFile := path.Join(m.LogPath, m.LogName)
@@ -63,6 +64,7 @@ func (m *MyLog) checkFileSize() (cut bool) {
 	}
 }
 
+// fileCut 文件切割
 func (m *MyLog) fileCut() {
 
 	err := m.fileObject.Close()
@@ -81,12 +83,13 @@ func (m *MyLog) fileCut() {
 		return
 	}
 	// 重新打开一个日志文件
-	err = m.SetLogFile()
+	err = m.SetLogFile(m.LogPath, m.LogName)
 	if err != nil {
 		fmt.Println("open new log file failed, error:", err)
 	}
 }
 
+// SetCut 设置文件切割大小与状态
 func (m *MyLog) SetCut(cutSize int) error {
 	if cutSize > 1024 {
 		return errors.New("cut size is too big, value should less than 1024")
@@ -96,7 +99,10 @@ func (m *MyLog) SetCut(cutSize int) error {
 	return nil
 }
 
-func (m *MyLog) SetLogFile() error {
+// SetLogFile 指定日志文件
+func (m *MyLog) SetLogFile(logPath, logName string) error {
+	m.LogPath = logPath
+	m.LogName = logName
 	logFile := path.Join(m.LogPath, m.LogName)
 	logfile, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {

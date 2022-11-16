@@ -21,7 +21,7 @@
    - 文件大小切割
    - 日期时间切割
 6. 当日志级别小于INFO时，将在标准输出中打印日志
-7. ~~日志写入使用异步写~~
+7. 日志写入使用异步写
 
 
 
@@ -35,6 +35,8 @@
 2022-10-25 15:25:43,FATAL,12059,main.go,main,35,this is fatal log
 ```
 
+> FATAL方法会推出进程
+
 
 
 ## 注意事项
@@ -43,5 +45,17 @@
 
 ```go
 var std, _ = New("debug", os.Stderr)
+```
+
+
+
+如果想要输入到文件，需要指定一个日志路径和文件名
+
+```shell
+	// 指定日志文件输出
+	err = myLogger.SetLogFile("./", "test.log")
+	if err != nil {
+		panic(err)
+	}
 ```
 

@@ -29,15 +29,18 @@ func (m *MyLog) Output(format interface{}, fileObject *os.File) {
 	// 检查日志级别，如果是日志级别小于Info级别，则在标准输出
 
 	fmt.Print(format)
+	go func(format interface{}) {
+		rwMutex.Lock()
+		_, err := fmt.Fprint(fileObject, format)
+		if err != nil {
+			fmt.Println("write log failed, error:", err)
+		}
+		rwMutex.Unlock()
+	}(format)
 
-	rwMutex.Lock()
-	_, err := fmt.Fprint(fileObject, format)
-	if err != nil {
-		fmt.Println("write log failed, error:", err)
-	}
-	rwMutex.Unlock()
 }
 
+// output 日志输出
 func (m *MyLog) output(level string, format string, a ...interface{}) {
 	// 检查日志是否需要切割
 	if m.Cut == true {
@@ -64,12 +67,15 @@ func (m *MyLog) output(level string, format string, a ...interface{}) {
 
 	// 写入日志文件
 	if m.fileObject != nil {
-		rwMutex.Lock()
-		_, err := fmt.Fprintf(m.fileObject, "%s,%s,%d,%s,%s,%d,%s\n", time.Now().Format("2006-01-02 15:04:05"), level, m.Pid, file, funcName, line, msg)
-		if err != nil {
-			fmt.Println("write log failed, error:", err)
-		}
-		rwMutex.Unlock()
+		go func(msg string) {
+			rwMutex.Lock()
+			_, err := fmt.Fprintf(m.fileObject, "%s,%s,%d,%s,%s,%d,%s\n", time.Now().Format("2006-01-02 15:04:05"), level, m.Pid, file, funcName, line, msg)
+			if err != nil {
+				fmt.Println("write log failed, error:", err)
+			}
+			rwMutex.Unlock()
+		}(msg)
+
 	}
 }
 
