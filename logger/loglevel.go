@@ -67,14 +67,14 @@ func (m *MyLog) output(level string, format string, a ...interface{}) {
 
 	// 写入日志文件
 	if m.fileObject != nil {
-		go func(msg *string) {
+		go func(msg string) {
 			rwMutex.Lock()
-			_, err := fmt.Fprintf(m.fileObject, "%s,%s,%d,%s,%s,%d,%s\n", time.Now().Format("2006-01-02 15:04:05"), level, m.Pid, file, funcName, line, *msg)
+			_, err := fmt.Fprintf(m.fileObject, "%s,%s,%d,%s,%s,%d,%s\n", time.Now().Format("2006-01-02 15:04:05"), level, m.Pid, file, funcName, line, msg)
 			if err != nil {
 				fmt.Println("write log failed, error:", err)
 			}
 			rwMutex.Unlock()
-		}(&msg)
+		}(msg)
 	}
 }
 
